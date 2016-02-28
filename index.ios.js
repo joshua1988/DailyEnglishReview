@@ -10,9 +10,14 @@ import React, {
   Text,
   TextInput,
   ListView,
-  View
+  TouchalbeHighlight,
+  View,
+  Image
 } from 'react-native';
 
+var FAKE_BOOK_DATA = [
+    {volumeInfo: {title: 'The Catcher in the Rye', authors: "J. D. Salinger", imageLinks: {thumbnail: 'http://books.google.com/books/content?id=PCDengEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api'}}}
+  ];
 
 class DailyEnglishReview extends Component {
 
@@ -27,6 +32,7 @@ class DailyEnglishReview extends Component {
   }
 
   render() {
+    var book = FAKE_BOOK_DATA[0];
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
@@ -35,15 +41,16 @@ class DailyEnglishReview extends Component {
         <TextInput
           style={styles.textinput}
         />
-
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
+        <View style={styles.rightContainer}>
+            <Image source={{uri: book.volumeInfo.imageLinks.thumbnail}}
+                            style={styles.thumbnail} />
+            <Text style={styles.title}>{book.volumeInfo.title}</Text>
+            <Text style={styles.author}>{book.volumeInfo.authors}</Text>
+        </View>
         <Text style={styles.instructions}>
           Press Cmd+R to reload,{'\n'}
           Cmd+D or shake for dev menu
         </Text>
-
       </View>
     );
   }
@@ -55,7 +62,13 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
-    marginTop : 30
+    marginTop : 30,
+  },
+  rightContainer: {
+      flex: 1,
+      flexDirection: 'row',
+      padding: 10,
+      backgroundColor: 'red'
   },
   textinput: {
     height: 40, 
@@ -76,6 +89,18 @@ const styles = StyleSheet.create({
     color: '#333333',
     marginBottom: 5,
   },
+  thumbnail: {
+        width: 53,
+        height: 81,
+        marginRight: 10
+  },
+  title: {
+      fontSize: 20,
+      marginBottom: 8
+  },
+  author: {
+      color: '#656565'
+  }
 });
 
 AppRegistry.registerComponent('DailyEnglishReview', () => DailyEnglishReview);
