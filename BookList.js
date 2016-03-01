@@ -10,7 +10,8 @@ var {
     ListView,
     View,
     TouchableHighlight,
-    Component
+    Component,
+    ActivityIndicatorIOS
    } = React;
  
 var styles = StyleSheet.create({
@@ -41,6 +42,14 @@ var styles = StyleSheet.create({
         height: 1,
         backgroundColor: "#dddddd",
     },
+    listView: {
+       backgroundColor: '#F5FCFF'
+    },
+    loading: {
+       flex: 1,
+       alignItems: 'center',
+       justifyContent: 'center'
+    },
     title: {
         fontSize: 20,
         marginBottom: 8
@@ -60,15 +69,14 @@ var styles = StyleSheet.create({
     }
 });
 
-var FAKE_BOOK_DATA = [
-    {volumeInfo: {title: 'The Catcher in the Rye', authors: "J. D. Salinger", imageLinks: {thumbnail: 'http://books.google.com/books/content?id=PCDengEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api'}}}
-];
+var REQUEST_URL = 'https://www.googleapis.com/books/v1/volumes?q=subject:fiction';
  
 class BookList extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            isLoading: true,
             dataSource: new ListView.DataSource({
                 rowHasChanged: (row1, row2) => row1 !== row2
             })
@@ -76,28 +84,32 @@ class BookList extends Component {
     }
 
     componentDidMount() {
-        var books = FAKE_BOOK_DATA;
-        this.setState({
-            dataSource: this.state.dataSource.cloneWithRows(books)
-        });
+        this.fetchData();
+    }
+
+    fetchData() {
+        fetch(REQUEST_URL)
+        .then((response) => response.json())
+        .then((responseData) => {
+            this.setState({
+                dataSource: this.state.dataSource.cloneWithRows(responseData.items),
+                isLoading: false
+            });
+        })
+        .done();
     }
 
     render() {
-    var book = FAKE_BOOK_DATA[0];
+        if (this.state.isLoading) {
+           return this.renderLoadingView();
+        }         
+
         return (
             <View style={styles.container}>
                 <Text style={styles.init}>
                     Welcome to DER
                 </Text>
                 <TextInput style={styles.textinput}/>
-                // <View style={styles.secondContainer}>
-                //     <Image source={{uri: book.volumeInfo.imageLinks.thumbnail}}
-                //                 style={styles.thumbnail} />
-                //     <View style={styles.rightContainer}>
-                //         <Text style={styles.title}>{book.volumeInfo.title}</Text>
-                //         <Text style={styles.author}>{book.volumeInfo.authors}</Text>
-                //     </View>
-                // </View>
                 <ListView
                     dataSource={this.state.dataSource}
                     renderRow={this.renderBook.bind(this)}
@@ -106,12 +118,24 @@ class BookList extends Component {
             </View>             
         );
     }
+
+    renderLoadingView() {
+        return (
+            <View style={styles.loading}>
+                <ActivityIndicatorIOS
+                    size='large'/>
+                <Text>
+                    Loading books...
+                </Text>
+            </View>
+        );
+    }
     
     renderBook(book) {
        return (
             <TouchableHighlight>
                 <View>
-                    <View style={styles.container}>
+                    <View style={styles.secondContainer}>
                         <Image
                             source={{uri: book.volumeInfo.imageLinks.thumbnail}}
                             style={styles.thumbnail} />
