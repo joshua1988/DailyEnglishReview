@@ -3,7 +3,7 @@
 var React = require('react-native');
 var Button = require('react-native-button');
 var Datastore = require('react-native-local-mongodb');
-var db = new Datastore();
+var db = new Datastore({ filename: 'asyncStorageKey', autoload: true });
 var doc = { word: "first", today: new Date()};
 
 // db.insert(doc, function (err, newDoc) {   // Callback is optional
@@ -65,26 +65,23 @@ class SearchBooks extends Component {
 
     constructor(props) {
         super(props);
+        var ds = new ListView.DataSource({
+          rowHasChanged: (row1, row2) => row1 !== row2
+        });
         this.state = {
             wordId: "",
-            dataSource: new ListView.DataSource({
-              rowHasChanged: (row1, row2) => row1 !== row2
-            }),
-            dbData: ""
+            dataSource: ds.cloneWithRows([{"content":"hello", "id":1}])
         };
         console.log("constructor done");
     }
 
     componentDidMount() {
-      var tempData = {"content":"First Data","id":1};
-      db.find({}, function(err, docs) {
-        console.log("docs : ",docs);
-        // tempData = docs;
-      });
-      this.setState({
-          dataSource: this.state.dataSource.cloneWithRows([tempData]),
-      });
-      console.log("this.state.dataSource : ", this.state.dataSource);
+      // var tempData = {"content":"First Data","id":1};
+      // this.setState({
+      //     // dataSource: this.state.dataSource.cloneWithRows([tempData]),
+      //     dataSource: this.state.dataSource.cloneWithRows([]),
+      // });
+      // console.log("this.state.dataSource : ", this.state.dataSource);
     }
 
     render() {
@@ -104,7 +101,7 @@ class SearchBooks extends Component {
             </Button>
             <ListView
               dataSource={this.state.dataSource}
-              renderRow={this.renderWords.bind(this)}
+              renderRow={this.renderRow.bind(this)}
               style={styles.listView}
               />
           </View>
@@ -114,14 +111,48 @@ class SearchBooks extends Component {
     // Button submit & clear text
     _submitForm = () => {
       // const { wordId } = this.state
-      console.log(this.state.wordId);
+      // console.log(this.state.wordId);
       var word = {"word" : this.state.wordId};
       this.addWord(word);
-
+      this.getWords();
       this.setState({
         wordId: ''
       });
     };
+
+    // _genRows() {
+    //   var dataBlob = [];
+    //   for (var ii = 0; ii < 100; ii++) {
+    //     var pressedText = pressData[ii] ? ' (pressed)' : '';
+    //     dataBlob.push('Row ' + ii + pressedText);
+    //   }
+    //   return dataBlob;
+    // }
+    //
+    // _genRows: function(pressData: {[key: number]: boolean}): Array<string> {
+    //   var dataBlob = [];
+    //   for (var ii = 0; ii < 100; ii++) {
+    //     var pressedText = pressData[ii] ? ' (pressed)' : '';
+    //     dataBlob.push('Row ' + ii + pressedText);
+    //   }
+    //   return dataBlob;
+    // },
+
+    getWords() {
+      var passVar="";
+      var that = this;
+      db.find({}, function(err, docs) {
+        console.log("docs : ",docs);
+        passVar = docs;
+        console.log("this : ",that);
+        that.setState({
+            // dataSource: this.state.dataSource.cloneWithRows([tempData]),
+            dataSource: that.state.dataSource.cloneWithRows([{"content" : "passVar", "id":2}])
+        });
+
+      });
+      // console.log("passVar : ", passVar);
+    }
 
     addWord(word) {
       db.insert(word, function (err, newDoc) {   // Callback is optional
@@ -132,7 +163,7 @@ class SearchBooks extends Component {
     }
 
     // ListView
-    renderWords(word) {
+    renderRow(word) {
        return (
             <TouchableHighlight>
                 <View>
