@@ -112,12 +112,9 @@ class SearchBooks extends Component {
     _submitForm = () => {
       // const { wordId } = this.state
       // console.log(this.state.wordId);
-      var word = {"word" : this.state.wordId};
-      this.addWord(word);
-      this.getWords();
-      this.setState({
-        wordId: ''
-      });
+      var word = {"content" : this.state.wordId};
+      // this.addWord(word);
+      this.getWords(word);
     };
 
     // _genRows() {
@@ -138,16 +135,18 @@ class SearchBooks extends Component {
     //   return dataBlob;
     // },
 
-    getWords() {
+    getWords(word) {
       var passVar="";
       var that = this;
       db.find({}, function(err, docs) {
         console.log("docs : ",docs);
         passVar = docs;
-        console.log("this : ",that);
+        console.log("that : ",that);
+        console.log("word : ",word);
         that.setState({
-            // dataSource: this.state.dataSource.cloneWithRows([tempData]),
-            dataSource: that.state.dataSource.cloneWithRows([{"content" : "passVar", "id":2}])
+            // dataBlobs.push 이용하기
+            dataSource: that.state.dataSource.cloneWithRows([word]),
+            wordId: ''
         });
 
       });
@@ -170,7 +169,7 @@ class SearchBooks extends Component {
                     <View style={styles.secondContainer}>
                         <View style={styles.rightContainer}>
                             <Text style={styles.title}>{word.content}</Text>
-                            <Text style={styles.author}>{word.id}</Text>
+                            <Text style={styles.author}>{word._id}</Text>
                         </View>
                     </View>
                     <View style={styles.separator}/>
