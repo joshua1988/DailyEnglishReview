@@ -18,6 +18,7 @@ var {
     Text,
     TextInput,
     ListView,
+    TouchableHighlight,
     Component
    } = React;
 
@@ -74,6 +75,18 @@ class SearchBooks extends Component {
         console.log("constructor done");
     }
 
+    componentDidMount() {
+      var tempData = {"content":"First Data","id":1};
+      db.find({}, function(err, docs) {
+        console.log("docs : ",docs);
+        // tempData = docs;
+      });
+      this.setState({
+          dataSource: this.state.dataSource.cloneWithRows([tempData]),
+      });
+      console.log("this.state.dataSource : ", this.state.dataSource);
+    }
+
     render() {
         return (
           <View style={styles.container}>
@@ -82,7 +95,6 @@ class SearchBooks extends Component {
                 placeholder="Type what you have learned today"
                 value={this.state.wordId}
                 onChangeText={wordId => this.setState({wordId})}
-                onSubmitEditing={this._submitForm}
             />
             <Button
               containerStyle={{padding:10, height:45, overflow:'hidden', borderRadius:4, backgroundColor: 'white'}}
@@ -105,6 +117,7 @@ class SearchBooks extends Component {
       console.log(this.state.wordId);
       var word = {"word" : this.state.wordId};
       this.addWord(word);
+
       this.setState({
         wordId: ''
       });
@@ -117,7 +130,6 @@ class SearchBooks extends Component {
         console.log("addWord() inserted", newDoc);
       });
     }
-
 
     // ListView
     renderWords(word) {

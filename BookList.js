@@ -165,7 +165,8 @@ class BookList extends Component {
     }
 
     renderBook(book) {
-       return (
+        console.log("book : ",book);
+        return (
             <TouchableHighlight>
                 <View>
                     <View style={styles.secondContainer}>
