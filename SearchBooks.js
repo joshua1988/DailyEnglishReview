@@ -6,12 +6,6 @@ var Datastore = require('react-native-local-mongodb');
 var db = new Datastore({ filename: 'asyncStorageKey', autoload: true });
 var doc = { word: "first", today: new Date()};
 
-// db.insert(doc, function (err, newDoc) {   // Callback is optional
-//   // newDoc is the newly inserted document, including its _id
-//   // newDoc has no key called notToBeSaved since its value was undefined
-//   console.log("db inserted", newDoc);
-// });
-
 var {
     StyleSheet,
     View,
@@ -70,18 +64,27 @@ class SearchBooks extends Component {
         });
         this.state = {
             wordId: "",
-            dataSource: ds.cloneWithRows([{"content":"hello", "id":1}])
+            dataSource: ds.cloneWithRows([])
         };
+        // this.setDate();
         console.log("constructor done");
     }
 
+    setDate() {
+      var customDate = new Date();
+      customDate = customDate.getFullYear() +"년 "+ (1 + customDate.getMonth()) +"월 "+ customDate.getDate() + "일 " +
+                    customDate.getHours() +"시 "+ customDate.getMinutes() +"분";
+      // console.log("customDate : ", customDate);
+      return customDate;
+    }
+
     componentDidMount() {
-      // var tempData = {"content":"First Data","id":1};
-      // this.setState({
-      //     // dataSource: this.state.dataSource.cloneWithRows([tempData]),
-      //     dataSource: this.state.dataSource.cloneWithRows([]),
+      // Remove All Data
+      // db.remove({}, { multi: true }, function (err, numRemoved) {
+      //   console.log("how many removed? ", numRemoved);
       // });
-      // console.log("this.state.dataSource : ", this.state.dataSource);
+
+      this.getWords();
     }
 
     render() {
@@ -94,10 +97,10 @@ class SearchBooks extends Component {
                 onChangeText={wordId => this.setState({wordId})}
             />
             <Button
-              containerStyle={{padding:10, height:45, overflow:'hidden', borderRadius:4, backgroundColor: 'white'}}
-              style={{fontSize: 20, color: 'green'}}
+              containerStyle={{padding:10, height:45, overflow:'hidden', borderRadius:4, backgroundColor: 'skyblue'}}
+              style={{fontSize: 20, color: 'blue'}}
               onPress={this._submitForm}>
-              Save
+              Take a note
             </Button>
             <ListView
               dataSource={this.state.dataSource}
@@ -110,45 +113,24 @@ class SearchBooks extends Component {
 
     // Button submit & clear text
     _submitForm = () => {
-      // const { wordId } = this.state
-      // console.log(this.state.wordId);
-      var word = {"content" : this.state.wordId};
-      // this.addWord(word);
-      this.getWords(word);
+      var word = {"content" : this.state.wordId, "date" : this.setDate()};
+      this.addWord(word);
+      this.getWords();
+      this.setState({
+          // dataBlobs.push 이용하기
+          wordId: ""
+      });
     };
 
-    // _genRows() {
-    //   var dataBlob = [];
-    //   for (var ii = 0; ii < 100; ii++) {
-    //     var pressedText = pressData[ii] ? ' (pressed)' : '';
-    //     dataBlob.push('Row ' + ii + pressedText);
-    //   }
-    //   return dataBlob;
-    // }
-    //
-    // _genRows: function(pressData: {[key: number]: boolean}): Array<string> {
-    //   var dataBlob = [];
-    //   for (var ii = 0; ii < 100; ii++) {
-    //     var pressedText = pressData[ii] ? ' (pressed)' : '';
-    //     dataBlob.push('Row ' + ii + pressedText);
-    //   }
-    //   return dataBlob;
-    // },
-
-    getWords(word) {
-      var passVar="";
+    getWords() {
       var that = this;
       db.find({}, function(err, docs) {
         console.log("docs : ",docs);
-        passVar = docs;
         console.log("that : ",that);
-        console.log("word : ",word);
         that.setState({
             // dataBlobs.push 이용하기
-            dataSource: that.state.dataSource.cloneWithRows([word]),
-            wordId: ''
+            dataSource: that.state.dataSource.cloneWithRows(docs)
         });
-
       });
       // console.log("passVar : ", passVar);
     }
@@ -169,7 +151,7 @@ class SearchBooks extends Component {
                     <View style={styles.secondContainer}>
                         <View style={styles.rightContainer}>
                             <Text style={styles.title}>{word.content}</Text>
-                            <Text style={styles.author}>{word._id}</Text>
+                            <Text style={styles.author}>{word.date}</Text>
                         </View>
                     </View>
                     <View style={styles.separator}/>
