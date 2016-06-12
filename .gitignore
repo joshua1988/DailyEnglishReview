@@ -15,11 +15,12 @@
 xcuserdata
 *.xccheckout
 *.moved-aside
-DerivedData
+DerivedData/
 *.hmap
 *.ipa
 *.xcuserstate
 project.xcworkspace
+ios/build/
 
 # Gradle
 /build/
