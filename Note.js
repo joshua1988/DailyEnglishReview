@@ -1,7 +1,7 @@
 'use strict';
 
 var React = require('react-native');
-var BookList = require('./BookList');
+var WordList = require('./WordList');
 
 var {
     StyleSheet,
@@ -15,18 +15,18 @@ var styles = StyleSheet.create({
     }
 });
 
-class Main extends Component {
+class Note extends Component {
     render() {
         return (
             <NavigatorIOS
                 style={styles.container}
                 initialRoute={{
-                  title: 'DailyEnlighReview',
-                  component: BookList
+                  title: 'Daily Enligh Review',
+                  component: WordList
                 }}
             />
         );
     }
 }
 
-module.exports = Main;
+module.exports = Note;

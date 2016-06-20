@@ -6,7 +6,7 @@
 'use strict';
 
 var React = require('react-native');
-var Main = require('./Main');
+var Note = require('./Note');
 var Analysis = require('./Analysis');
 
 var {
@@ -23,7 +23,7 @@ class DailyEnglishReview extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedTab: 'analysis'
+            selectedTab: 'note'
         };
     }
 
@@ -31,21 +31,21 @@ class DailyEnglishReview extends Component {
         return (
             <TabBarIOS selectedTab={this.state.selectedTab}>
                 <TabBarIOS.Item
-                    selected={this.state.selectedTab === 'main'}
-                    // icon={{uri:'main'}}
-                    // icon={{uri: 'history'}}
-                    systemIcon="history"
+                    selected={this.state.selectedTab === 'note'}
+                    // icon={{uri: base64Icon, scale: 3}}
+                    systemIcon="bookmarks"
                     onPress={() => {
                         this.setState({
-                            selectedTab: 'main'
+                            selectedTab: 'note'
                         });
                     }}>
-                    <Main/>
+                    <Note/>
                 </TabBarIOS.Item>
                 <TabBarIOS.Item
                     selected={this.state.selectedTab === 'analysis'}
-                    // icon={{uri: base64Icon, scale: 3}}
-                    systemIcon="bookmarks"
+                    // icon={{uri:'analysis'}}
+                    // icon={{uri: 'history'}}
+                    systemIcon="history"
                     onPress={() => {
                         this.setState({
                             selectedTab: 'analysis'
